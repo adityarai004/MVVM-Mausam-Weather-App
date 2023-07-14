@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="Location">
+        <EditTextPreference
+            android:title="Location"
+            android:defaultValue="London"
+            android:key="edit_text_preference_1"
+            app:useSimpleSummaryProvider="true"/>
+    </PreferenceCategory>
+    <PreferenceCategory app:title="Units">
+        <ListPreference
+            app:defaultValue="Metric"
+            app:key="pref_key_units"
+            app:title="Temperature Units"
+            app:entries="@array/temperature_units_entries"
+            app:entryValues="@array/temperature_units_values"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+</PreferenceScreen>

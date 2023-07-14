@@ -1,0 +1,58 @@
+<androidx.cardview.widget.CardView
+    android:layout_width="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="5dp"
+    android:layout_margin="5dp"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="10dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_margin="5dp"
+        android:layout_gravity="center"
+        android:background="@drawable/hourly_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/time_tv"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:paddingTop="8dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:text="12:30 pm" />
+
+        <ImageView
+            android:id="@+id/weather_icon_iv"
+            app:layout_constraintTop_toBottomOf="@id/time_tv"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"/>
+
+        <TextView
+            app:layout_constraintTop_toBottomOf="@id/weather_icon_iv"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:id="@+id/temp_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:paddingBottom="5dp"
+            android:text="30°" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
