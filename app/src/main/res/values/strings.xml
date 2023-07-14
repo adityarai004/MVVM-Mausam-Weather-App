@@ -2,4 +2,8 @@
     <string name="app_name">Mausam - Weather App</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dashed_string">- -</string>
+    <string name="feels_like_string">- - / - - Feels like - -</string>
+    <string name="astro_string">Astro</string>
+    <string name="air_quality_string">Air Quality</string>
 </resources>

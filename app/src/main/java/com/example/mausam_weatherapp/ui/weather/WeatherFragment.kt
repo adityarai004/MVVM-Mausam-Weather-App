@@ -1,9 +1,9 @@
-package com.example.mausam_weatherapp.ui.fragment
+package com.example.mausam_weatherapp.ui.weather
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.GridView
-import android.widget.TextView
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -11,7 +11,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.mausam_weatherapp.ui.adapters.AirQualityAdapter
 import com.example.mausam_weatherapp.ui.adapters.AstroGVAdapter
 import com.example.mausam_weatherapp.ui.models.AstroModel
@@ -24,16 +23,12 @@ import com.example.mausam_weatherapp.R
 import com.example.mausam_weatherapp.api.WeatherAPI
 import com.example.mausam_weatherapp.ui.viewmodels.WeatherViewModelFactory
 import com.example.mausam_weatherapp.data.WeatherRepository
+import com.example.mausam_weatherapp.databinding.FragmentWeatherBinding
 import com.example.mausam_weatherapp.ui.viewmodels.WeatherViewModel
 
 class WeatherFragment : Fragment(R.layout.fragment_weather)  {
     private lateinit var viewModel: WeatherViewModel
     private val retroService = WeatherAPI.createRetrofitInstance()
-    private lateinit var hourlyTempRv:RecyclerView
-    private lateinit var forecastRv:RecyclerView
-    private lateinit var airQualityRv:RecyclerView
-    private lateinit var astroGV:GridView
-    private lateinit var astroGV2:GridView
     private val hourlyItems = mutableListOf<HourlyItemModel>()
     private val forecastItems = mutableListOf<ForecastItemModel>()
     private val astroList = mutableListOf<AstroModel>()
@@ -42,24 +37,18 @@ class WeatherFragment : Fragment(R.layout.fragment_weather)  {
     private lateinit var hourlyAdapter: HourlyAdapter
     private lateinit var forecastAdapter: ForecastAdapter
     private lateinit var airQualityAdapter: AirQualityAdapter
+    private lateinit var binding: FragmentWeatherBinding
 
-    lateinit var currentTempTV:TextView
-    lateinit var currentConditionTV:TextView
-    lateinit var currentLocationTV:TextView
-    lateinit var currentFeelsLikeTV:TextView
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentWeatherBinding.inflate(inflater, container, false)
+        return binding.root
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        hourlyTempRv = view.findViewById(R.id.hourly_temp_rv)
-        forecastRv = view.findViewById(R.id.forecast_rv)
-        airQualityRv = view.findViewById(R.id.air_quality_rv)
-        astroGV = view.findViewById(R.id.astro_gv)
-        astroGV2 = view.findViewById(R.id.astro_gv_2)
-
-        currentTempTV = view.findViewById(R.id.current_temp_tv)
-        currentConditionTV = view.findViewById(R.id.current_condition_tv)
-        currentLocationTV = view.findViewById(R.id.current_location_tv)
-        currentFeelsLikeTV = view.findViewById(R.id.current_feels_like_tv)
-
         val sp = PreferenceManager.getDefaultSharedPreferences(context)
         val location = sp.getString("edit_text_preference_1","London")
         val metric = sp.getString("pref_key_units","Metric")
@@ -82,21 +71,20 @@ class WeatherFragment : Fragment(R.layout.fragment_weather)  {
                     Toast.makeText(requireContext(),"kuc toh bhi hoyega ",Toast.LENGTH_SHORT).show()
                 }
                 else{
-
-                if(metric == "Metric"){
-                    setUpCurrentData()
-                    setUpAstroGridView()
-                    setUpForecastRecyclerView()
-                    setUpHourlyRecyclerView()
-                    setUpPollutantRecyclerView()
-                }
-                else{
-                    setUpCurrentDataF()
-                    setUpAstroGridView()
-                    setUpForecastRecyclerViewF()
-                    setUpHourlyRecyclerViewF()
-                    setUpPollutantRecyclerView()
-                }
+                    if(metric == "Metric"){
+                        setUpCurrentData()
+                        setUpAstroGridView()
+                        setUpForecastRecyclerView()
+                        setUpHourlyRecyclerView()
+                        setUpPollutantRecyclerView()
+                    }
+                    else{
+                        setUpCurrentDataF()
+                        setUpAstroGridView()
+                        setUpForecastRecyclerViewF()
+                        setUpHourlyRecyclerViewF()
+                        setUpPollutantRecyclerView()
+                    }
                 }
             }
         })
@@ -107,10 +95,10 @@ class WeatherFragment : Fragment(R.layout.fragment_weather)  {
         viewModel.result.observe(requireActivity(), Observer {
             val activity: FragmentActivity? = activity
             if (isAdded && activity != null) {
-                currentLocationTV.text = "${it.location.name}, ${it.location.country}"
-                currentTempTV.text = it.current.temp_c.toString() + "℃"
-                currentConditionTV.text = it.current.condition.text
-                currentFeelsLikeTV.text =
+                binding.currentConditionTv.text = it.current.condition.text
+                binding.currentLocationTv.text = "${it.location.name}, ${it.location.country}"
+                binding.currentTempTv.text = it.current.temp_c.toString() + "℃"
+                binding.currentFeelsLikeTv.text =
                     "${it.forecast.forecastday[0].day.maxtemp_c}℃ / ${it.forecast.forecastday[0].day.mintemp_c}℃ Feels like ${it.current.feelslike_c}℃"
             }
         })
@@ -123,9 +111,9 @@ class WeatherFragment : Fragment(R.layout.fragment_weather)  {
                 for(i in 23 downTo 0){
                     hourlyItems.add(HourlyItemModel(it.forecast.forecastday[0].hour[i].time,it.forecast.forecastday[0].hour[i].temp_c,it.forecast.forecastday[0].hour[i].condition.icon))
                 }
-                hourlyTempRv.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,true)
+                binding.hourlyTempRv.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,true)
                 hourlyAdapter = HourlyAdapter(requireContext(),hourlyItems)
-                hourlyTempRv.adapter = hourlyAdapter
+                binding.hourlyTempRv.adapter = hourlyAdapter
             }
         })
     }
@@ -141,9 +129,9 @@ class WeatherFragment : Fragment(R.layout.fragment_weather)  {
                     )
                 }
 
-                forecastRv.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,true)
+                binding.forecastRv.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,true)
                 forecastAdapter = ForecastAdapter(requireContext(),forecastItems)
-                forecastRv.adapter = forecastAdapter
+                binding.forecastRv.adapter = forecastAdapter
 
             }
         })
@@ -161,8 +149,8 @@ class WeatherFragment : Fragment(R.layout.fragment_weather)  {
 
                 val astroAdapter = AstroGVAdapter(requireContext(),astroList)
                 val astroAdapter2 = AstroGVAdapter(requireContext(),astroList2)
-                astroGV.adapter = astroAdapter
-                astroGV2.adapter = astroAdapter2
+                binding.astroGv.adapter = astroAdapter
+                binding.astroGv2.adapter = astroAdapter2
             }
         })
     }
@@ -184,10 +172,10 @@ class WeatherFragment : Fragment(R.layout.fragment_weather)  {
                     )
                 )
 
-                airQualityRv.layoutManager =
+                binding.airQualityRv.layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
                 airQualityAdapter = AirQualityAdapter(requireContext(), pollutantList)
-                airQualityRv.adapter = airQualityAdapter
+                binding.airQualityRv.adapter = airQualityAdapter
             }
         })
     }
@@ -200,9 +188,9 @@ class WeatherFragment : Fragment(R.layout.fragment_weather)  {
                 for(i in 23 downTo 0){
                     hourlyItems.add(HourlyItemModel(it.forecast.forecastday[0].hour[i].time,it.forecast.forecastday[0].hour[i].temp_f,it.forecast.forecastday[0].hour[i].condition.icon))
                 }
-                hourlyTempRv.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,true)
+                binding.hourlyTempRv.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,true)
                 hourlyAdapter = HourlyAdapter(requireContext(),hourlyItems)
-                hourlyTempRv.adapter = hourlyAdapter
+                binding.hourlyTempRv.adapter = hourlyAdapter
             }
         })
     }
@@ -218,9 +206,9 @@ class WeatherFragment : Fragment(R.layout.fragment_weather)  {
                     )
                 }
 
-                forecastRv.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,true)
+                binding.forecastRv.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,true)
                 forecastAdapter = ForecastAdapter(requireContext(),forecastItems)
-                forecastRv.adapter = forecastAdapter
+                binding.forecastRv.adapter = forecastAdapter
 
             }
         })
@@ -229,10 +217,10 @@ class WeatherFragment : Fragment(R.layout.fragment_weather)  {
         viewModel.result.observe(requireActivity(), Observer {
             val activity: FragmentActivity? = activity
             if (isAdded && activity != null) {
-                currentLocationTV.text = it.location.name
-                currentTempTV.text = it.current.temp_f.toString() + "℉"
-                currentConditionTV.text = it.current.condition.text
-                currentFeelsLikeTV.text =
+                binding.currentLocationTv.text = it.location.name
+                binding.currentTempTv.text = it.current.temp_f.toString() + "℉"
+                binding.currentConditionTv.text = it.current.condition.text
+                binding.currentFeelsLikeTv.text =
                     "${it.forecast.forecastday[0].day.maxtemp_f}℉ / ${it.forecast.forecastday[0].day.mintemp_f}℉ Feels like ${it.current.feelslike_f}℉"
             }
         })
